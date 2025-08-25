@@ -1,9 +1,8 @@
 // components/Layout.js - Fixed version
 import Head from 'next/head';
 import Link from 'next/link';
-import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import ThemeChanger from './ThemeChanger';
 import Footer from './Footer';
 import { AdBanner, AdSidebar } from './AdUnit';

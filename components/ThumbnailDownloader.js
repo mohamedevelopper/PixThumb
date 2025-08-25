@@ -1,6 +1,7 @@
-// components/ThumbnailDownloader.js (Final Corrected Version)
+// components/ThumbnailDownloader.js (Fixed Version)
 
 import { useState } from 'react';
+import Image from 'next/image';
 import {
     ArrowDownTrayIcon,
     ClipboardDocumentIcon,
@@ -8,7 +9,7 @@ import {
     CheckIcon,
     ExclamationTriangleIcon,
     SparklesIcon,
-    FolderArrowDownIcon, // CORRECTED: This is a real icon name
+    FolderArrowDownIcon,
     CloudArrowDownIcon
 } from '@heroicons/react/24/outline';
 import JSZip from 'jszip';
@@ -16,7 +17,7 @@ import JSZip from 'jszip';
 // Helper component for the loading spinner
 const LoadingSpinner = () => (
     <div className="flex items-center justify-center">
-        <svg className="animate-spin h-6 w-6 text-white mr-2" xmlns="http://www.w.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <svg className="animate-spin h-6 w-6 text-white mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
         </svg>
@@ -49,21 +50,16 @@ const BulkDownloadProgress = ({ progress, total, currentFile }) => (
     </div>
 );
 
-
 export default function ThumbnailDownloader() {
-    // All your state hooks are perfect
     const [videoURL, setVideoURL] = useState('');
     const [thumbnails, setThumbnails] = useState(null);
-    const [videoID, setVideoID] = useState(null);
     const [videoTitle, setVideoTitle] = useState('');
     const [channelName, setChannelName] = useState('');
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [copiedUrl, setCopiedUrl] = useState(null);
-    const [downloadCount, setDownloadCount] = useState(0);
     const [bulkDownloadProgress, setBulkDownloadProgress] = useState(null);
 
-    // All your helper functions are great
     const getYouTubeVideoID = (url) => {
         const patterns = [
             /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/v\/|m\.youtube\.com\/watch\?v=|youtube\.com\/shorts\/|www\.youtube\.com\/shorts\/)([^#\&\?]{11})/,
@@ -78,7 +74,6 @@ export default function ThumbnailDownloader() {
 
     const getVideoInfo = async (videoId) => {
         try {
-            // Using a more reliable oEmbed provider
             const response = await fetch(`https://noembed.com/embed?url=https://www.youtube.com/watch?v=${videoId}`);
             if (response.ok) {
                 const data = await response.json();
@@ -123,7 +118,6 @@ export default function ThumbnailDownloader() {
     };
 
     const handleSingleDownload = async (url, quality) => {
-        setDownloadCount(prev => prev + 1);
         try {
             const response = await fetch(url);
             if (!response.ok) throw new Error('Network response not ok');
@@ -161,7 +155,7 @@ export default function ThumbnailDownloader() {
             setIsLoading(false);
             return;
         }
-        setVideoID(currentVideoID);
+        
         const videoInfo = await getVideoInfo(currentVideoID);
         setVideoTitle(videoInfo.title);
         setChannelName(videoInfo.author);
@@ -227,7 +221,7 @@ export default function ThumbnailDownloader() {
             {thumbnails && (
                 <div className="mt-16 animate-slide-up">
                     <div className="text-center mb-8">
-                        <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">Your Thumbnails are Ready! 🎉</h2>
+                        <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">Your Thumbnails are Ready!</h2>
                         <div className="max-w-3xl mx-auto mb-6">
                             <p className="text-xl text-gray-600 dark:text-gray-400 mb-2"><span className="font-semibold italic">"{videoTitle}"</span></p>
                             {channelName && <p className="text-lg text-gray-500 dark:text-gray-500">by {channelName}</p>}
@@ -244,7 +238,15 @@ export default function ThumbnailDownloader() {
                         {thumbnails.map(({ name, resolution, use, url, badge }) => (
                             <div key={name} className="group bg-white dark:bg-gray-800 rounded-2xl shadow-lg overflow-hidden flex flex-col hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 border border-gray-200 dark:border-gray-700">
                                 <div className="relative overflow-hidden">
-                                    <img src={url} alt={`${videoTitle} - ${name} thumbnail`} className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-110" loading="lazy" />
+                                    <Image 
+                                        src={url} 
+                                        alt={`${videoTitle} - ${name} thumbnail`} 
+                                        width={320}
+                                        height={180}
+                                        className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-110" 
+                                        loading="lazy"
+                                        unoptimized
+                                    />
                                     {badge && <div className="absolute top-3 right-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg">{badge}</div>}
                                 </div>
                                 <div className="p-6 flex flex-col flex-grow text-center">
@@ -269,7 +271,7 @@ export default function ThumbnailDownloader() {
 
             {!thumbnails && !isLoading && (
                 <div className="mt-16 max-w-4xl mx-auto">
-                    <h3 className="text-2xl font-bold text-center text-gray-900 dark:text-white mb-8">💡 The Ultimate Thumbnail Tool</h3>
+                    <h3 className="text-2xl font-bold text-center text-gray-900 dark:text-white mb-8">The Ultimate Thumbnail Tool</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-center">
                         <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
                             <div className="text-3xl mb-3">📁</div>
