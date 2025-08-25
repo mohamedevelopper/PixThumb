@@ -1,4 +1,4 @@
-// components/Layout.js - Updated with Logo
+// components/Layout.js - Fixed version
 import Head from 'next/head';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -6,24 +6,18 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import ThemeChanger from './ThemeChanger';
 import Footer from './Footer';
-import { AdBanner, AdSidebar, AdInFeed } from './AdUnit';
+import { AdBanner, AdSidebar } from './AdUnit';
 import AdBlockDetector from './AdBlockDetector';
 
 const Layout = ({ 
   children, 
   title = "PixThumb - Free YouTube Thumbnail Downloader",
   description = "Download YouTube thumbnails in HD quality for free with bulk ZIP download",
-  showSidebar = false,
   pageType = "default" // homepage, blog, blog-post, static
 }) => {
   const router = useRouter();
-  const [mounted, setMounted] = useState(false);
-  
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
-  const getAdConfig = (pageType, path) => {
+  const getAdConfig = (pageType) => {
     const configs = {
       homepage: {
         showTopBanner: true,
@@ -57,7 +51,7 @@ const Layout = ({
     return configs[pageType] || configs.default;
   };
 
-  const adConfig = getAdConfig(pageType, router.pathname);
+  const adConfig = getAdConfig(pageType);
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
@@ -88,27 +82,11 @@ const Layout = ({
         )}
       </Head>
 
-      {/* Updated Navigation with Logo */}
+      {/* Navigation with Logo */}
       <nav className="w-full py-3 bg-white shadow-sm sticky top-0 z-50 dark:bg-gray-800 dark:border-b dark:border-gray-700">
         <div className="max-w-7xl mx-auto flex justify-between items-center px-4">
-          {/* Logo Section */}
           <Link href="/" legacyBehavior>
             <a className="flex items-center space-x-3 group">
-              {/* Option 1: Logo Image + Text */}
-              <div className="relative w-8 h-8 md:w-10 md:h-10">
-                <Image
-                  src="/logo.png" // Place your logo in public/logo.png
-                  alt="PixThumb Logo"
-                  fill
-                  className="object-contain group-hover:scale-105 transition-transform"
-                />
-              </div>
-              <span className="text-xl md:text-2xl font-bold text-indigo-600 dark:text-indigo-400 group-hover:text-indigo-700 dark:group-hover:text-indigo-300 transition-colors">
-                PixThumb
-              </span>
-              
-              {/* Option 2: CSS-based Logo (if you don't have an image yet) */}
-              {/* 
               <div className="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform shadow-lg">
                 <svg className="w-4 h-4 md:w-5 md:h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
@@ -117,7 +95,6 @@ const Layout = ({
               <span className="text-xl md:text-2xl font-bold text-indigo-600 dark:text-indigo-400 group-hover:text-indigo-700 dark:group-hover:text-indigo-300 transition-colors">
                 PixThumb
               </span>
-              */}
             </a>
           </Link>
           
@@ -192,7 +169,7 @@ const Layout = ({
   );
 };
 
-// Mobile Menu Component (same as before)
+// Mobile Menu Component
 const MobileMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
@@ -237,7 +214,7 @@ const MobileMenu = () => {
   );
 };
 
-// Dynamic Sidebar Content (same as before)
+// Fixed Sidebar Content with proper Link components
 const SidebarContent = ({ pageType }) => {
   switch (pageType) {
     case 'blog':
@@ -249,15 +226,21 @@ const SidebarContent = ({ pageType }) => {
               Popular Posts
             </h3>
             <div className="space-y-3">
-              <a href="/blog/ultimate-guide" className="block text-sm text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400">
-                📈 Ultimate Guide to YouTube Thumbnails
-              </a>
-              <a href="/blog/best-practices" className="block text-sm text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400">
-                🎨 Thumbnail Design Best Practices
-              </a>
-              <a href="/blog/tools-review" className="block text-sm text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400">
-                🛠️ Best Tools for YouTube Creators
-              </a>
+              <Link href="/blog/ultimate-guide" legacyBehavior>
+                <a className="block text-sm text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400">
+                  Ultimate Guide to YouTube Thumbnails
+                </a>
+              </Link>
+              <Link href="/blog/best-practices" legacyBehavior>
+                <a className="block text-sm text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400">
+                  Thumbnail Design Best Practices
+                </a>
+              </Link>
+              <Link href="/blog/tools-review" legacyBehavior>
+                <a className="block text-sm text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400">
+                  Best Tools for YouTube Creators
+                </a>
+              </Link>
             </div>
           </div>
 
@@ -289,17 +272,17 @@ const SidebarContent = ({ pageType }) => {
           <div className="space-y-3">
             <Link href="/" legacyBehavior>
               <a className="block text-sm text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400">
-                🎯 Thumbnail Downloader
+                Thumbnail Downloader
               </a>
             </Link>
             <Link href="/blog" legacyBehavior>
               <a className="block text-sm text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400">
-                📚 Creator Tips & Guides
+                Creator Tips & Guides
               </a>
             </Link>
             <Link href="/about" legacyBehavior>
               <a className="block text-sm text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400">
-                ℹ️ About PixThumb
+                About PixThumb
               </a>
             </Link>
           </div>
