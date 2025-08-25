@@ -1,40 +1,35 @@
 /** @type {import('next').NextConfig} */
-// PRESERVED: Your existing bundle analyzer setup
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
 });
 
 const nextConfig = {
-  // PRESERVED: All your existing settings
   reactStrictMode: true,
   swcMinify: true,
   
-  // ENHANCED: Image optimization with ad domains added
+  // Image optimization for Vercel
   images: {
     domains: [
       'img.youtube.com', 
       'i.ytimg.com',
-      // NEW: Ad-related domains for better performance
       'googleads.g.doubleclick.net',
       'pagead2.googlesyndication.com'
     ],
     formats: ['image/webp', 'image/avif'],
-    // NEW: Longer cache for better ad performance
     minimumCacheTTL: 60 * 60 * 24 * 7, // 7 days
   },
   
-  // PRESERVED: Your compression and security settings
+  // Performance and security settings
   compress: true,
   poweredByHeader: false,
   trailingSlash: false,
   
-  // ENHANCED: Headers with ad optimization additions
+  // Security and performance headers
   async headers() {
     return [
       {
         source: '/(.*)',
         headers: [
-          // PRESERVED: Your existing security headers
           {
             key: 'X-Frame-Options',
             value: 'DENY',
@@ -47,14 +42,12 @@ const nextConfig = {
             key: 'Referrer-Policy',
             value: 'strict-origin-when-cross-origin',
           },
-          // NEW: Additional headers for better ad performance
           {
             key: 'X-DNS-Prefetch-Control',
             value: 'on',
           },
         ],
       },
-      // NEW: Cache optimization for static assets (better ad loading)
       {
         source: '/static/(.*)',
         headers: [
@@ -64,7 +57,6 @@ const nextConfig = {
           },
         ],
       },
-      // NEW: Cache images including potential ad images
       {
         source: '/_next/image(.*)',
         headers: [
@@ -77,7 +69,7 @@ const nextConfig = {
     ];
   },
 
-  // NEW: SEO-friendly redirects (optional but good for ads)
+  // SEO-friendly redirects
   async redirects() {
     return [
       {
@@ -94,5 +86,4 @@ const nextConfig = {
   },
 };
 
-// PRESERVED: Your existing export with bundle analyzer
 module.exports = withBundleAnalyzer(nextConfig);
