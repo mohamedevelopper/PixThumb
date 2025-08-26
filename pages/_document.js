@@ -1,32 +1,42 @@
-// pages/_document.js - Enhanced while preserving your existing setup
+// pages/_document.js - Enhanced with Favicon Support
 
 import { Html, Head, Main, NextScript } from 'next/document';
-import { GA_TRACKING_ID } from '../lib/gtag'; // PRESERVED: Your existing gtag import
+import { GA_TRACKING_ID } from '../lib/gtag';
 
 export default function Document() {
   return (
     <Html lang="en">
       <Head>
-        {/* PRESERVED + ENHANCED: Your AdSense script with improvements */}
-        <script
-          async
-          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${process.env.NEXT_PUBLIC_GOOGLE_ADSENSE_ID}`}
-          crossOrigin="anonymous"
-        />
+        {/* Favicon Implementation - Based on your existing files */}
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="icon" href="/favicon-96x96.png" type="image/png" sizes="96x96" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        <link rel="manifest" href="/site.webmanifest" />
+        <meta name="theme-color" content="#dc4444" />
+
+        {/* AdSense Implementation */}
+        {process.env.NEXT_PUBLIC_GOOGLE_ADSENSE_ID && (
+          <>
+            <script
+              async
+              src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${process.env.NEXT_PUBLIC_GOOGLE_ADSENSE_ID}`}
+              crossOrigin="anonymous"
+            />
+            
+            <script
+              dangerouslySetInnerHTML={{
+                __html: `
+                  (adsbygoogle = window.adsbygoogle || []).push({
+                    google_ad_client: "${process.env.NEXT_PUBLIC_GOOGLE_ADSENSE_ID}",
+                    enable_page_level_ads: true
+                  });
+                `,
+              }}
+            />
+          </>
+        )}
         
-        {/* NEW: AdSense Auto Ads initialization (optional - can improve revenue) */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (adsbygoogle = window.adsbygoogle || []).push({
-                google_ad_client: "${process.env.NEXT_PUBLIC_GOOGLE_ADSENSE_ID}",
-                enable_page_level_ads: true
-              });
-            `,
-          }}
-        />
-        
-        {/* PRESERVED: Your existing Google Analytics script (perfectly fine) */}
+        {/* Google Analytics Implementation */}
         {GA_TRACKING_ID && (
           <>
             <script
@@ -48,11 +58,9 @@ export default function Document() {
           </>
         )}
 
-        {/* NEW: Preconnect to ad domains for better performance */}
+        {/* Performance Optimizations */}
         <link rel="preconnect" href="https://pagead2.googlesyndication.com" />
         <link rel="preconnect" href="https://googleads.g.doubleclick.net" />
-        
-        {/* NEW: DNS prefetch for ad performance */}
         <link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
         <link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
       </Head>
